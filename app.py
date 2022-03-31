@@ -97,6 +97,20 @@ def index():
             return redirect(url_for("logout"))
         elif "reset_button" in request.form:
             return redirect(url_for("user"))
+    if USER_STUDY.on_left_vertex:
+        return render_template(
+            "index.html",
+            reference_image_url=USER_STUDY.current_dataset_image_url,
+            compare_image_url=USER_STUDY.current_grid_image_url,
+            is_left_button_disabled="disabled",
+        )
+    elif USER_STUDY.on_right_vertex:
+        return render_template(
+            "index.html",
+            reference_image_url=USER_STUDY.current_dataset_image_url,
+            compare_image_url=USER_STUDY.current_grid_image_url,
+            is_right_button_disabled="disabled",
+        )
     return render_template(
         "index.html",
         reference_image_url=USER_STUDY.current_dataset_image_url,

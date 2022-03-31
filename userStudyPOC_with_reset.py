@@ -25,8 +25,8 @@ class UserStudyPOC_with_reset(object):
         self._init_grid_image_index = -1
         self._upper_boundary = -1
         self._down_boundary = -1
-        self._on_left_vertex = False
-        self._on_right_vertex = False
+        self.on_left_vertex = False
+        self.on_right_vertex = False
         self._compute_average_score = False
 
     def init_user_dataset_file(self, user):
@@ -81,11 +81,11 @@ class UserStudyPOC_with_reset(object):
         else:
             print("on right side")
             # we touch the right vertex
-            if self._on_right_vertex:
+            if self.on_right_vertex:
                 print(
                     "touched right vertex and we computer average score from here"
                 )
-                self._on_right_vertex = False
+                self.on_right_vertex = False
                 self._compute_average_score = True
                 grid_im_url_list = self.all_grid_im_url_list[
                     len(self.all_grid_im_url_list)
@@ -102,14 +102,14 @@ class UserStudyPOC_with_reset(object):
         ]
         if self._down_boundary == 0 and self._upper_boundary == 1:
             print("touch left vertex")
-            self._on_left_vertex = True
+            self.on_left_vertex = True
             grid_im_url_list = [self.all_grid_im_url_list[0]]
         if self._down_boundary == self._upper_boundary:
             print("down boundary == upper boundary")
             grid_im_url_list = [self.all_grid_im_url_list[self._down_boundary]]
 
         # other case then touch the vertex
-        if len(grid_im_url_list) == 1 and not self._on_left_vertex:
+        if len(grid_im_url_list) == 1 and not self.on_left_vertex:
             self._compute_average_score = True
             grid_im_url_list = self.all_grid_im_url_list[
                 self._down_boundary : self._upper_boundary + 1
@@ -134,9 +134,9 @@ class UserStudyPOC_with_reset(object):
         else:
             print("left side")
             # we touche left vertex
-            if self._on_left_vertex:
+            if self.on_left_vertex:
                 print("on left vertex")
-                self._on_left_vertex = False
+                self.on_left_vertex = False
                 self._compute_average_score = True
                 grid_im_url_list = self.all_grid_im_url_list[0:2]
                 return grid_im_url_list
@@ -148,12 +148,12 @@ class UserStudyPOC_with_reset(object):
         ]
         print("len(grid_im_url_list) ", len(grid_im_url_list))
         if self._down_boundary == len(self.all_grid_im_url_list) - 2:
-            self._on_right_vertex = True
+            self.on_right_vertex = True
         if self._down_boundary == self._upper_boundary:
             grid_im_url_list = [self.all_grid_im_url_list[0]]
 
         # other case than touche the vertex
-        if len(grid_im_url_list) == 1 and not self._on_right_vertex:
+        if len(grid_im_url_list) == 1 and not self.on_right_vertex:
             self._compute_average_score = True
             grid_im_url_list = self.all_grid_im_url_list[
                 self._down_boundary : self._upper_boundary + 1

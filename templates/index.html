@@ -67,10 +67,11 @@
     <hr>
     <div style="text-align: center;">
         <form action="#" method="post">
-            <input type="submit" name="left_button" value="less exposure" id="idleft_buttom"
+            <input type="submit" name="left_button" value="less exposure" {{is_left_button_disabled}}
                 style="padding: 12px 28px;">
             <input type="submit" name="equal_button" value="same exposure" style="padding: 12px 28px;">
-            <input type="submit" name="right_button" value="more exposure" style="padding: 12px 28px;">
+            <input type="submit" name="right_button" value="more exposure" {{is_right_button_disabled}}
+                style="padding: 12px 28px;">
         </form>
         <form action="#" method="post">
             <input type="submit" name="logout_button" value="logout" style="padding: 12px 28px;">
