@@ -95,8 +95,8 @@ def index():
             )
         elif "logout_button" in request.form:
             return redirect(url_for("logout"))
-        elif "left_button" in request.form:
-            pass
+        elif "reset_button" in request.form:
+            return redirect(url_for("user"))
     return render_template(
         "index.html",
         reference_image_url=USER_STUDY.current_dataset_image_url,
