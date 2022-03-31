@@ -8,16 +8,18 @@ from flask import (
     send_from_directory,
     flash,
 )
-
+from flask_socketio import SocketIO
 import os
-from userStudyPOC import UserStudyPOC
+
+# from userStudyPOC import UserStudyPOC
+from userStudyPOC_with_reset import UserStudyPOC_with_reset
 
 app = Flask(__name__)
 app.secret_key = "user study interface"
 REF_IMAGE_FOLDER = os.path.join("static", "userStudyData")
 app.config["UPLOAD_FOLDER"] = REF_IMAGE_FOLDER
-
-USER_STUDY = UserStudyPOC()
+socketio = SocketIO(app)
+USER_STUDY = UserStudyPOC_with_reset()
 # [X] session: look into
 # [X] modify structure of buttons trigger (find a better way to trigger)
 # [X] update funtions
@@ -93,6 +95,8 @@ def index():
             )
         elif "logout_button" in request.form:
             return redirect(url_for("logout"))
+        elif "left_button" in request.form:
+            pass
     return render_template(
         "index.html",
         reference_image_url=USER_STUDY.current_dataset_image_url,
@@ -122,6 +126,11 @@ def logout():
     session.pop("user_email_address", None)
     # session.pop("userStudy", None)
     return redirect(url_for("login"))
+
+
+@socketio.on("disconnect")
+def disconnect_user():
+    logout()
 
 
 @app.route("/user", methods=["GET", "POST"])

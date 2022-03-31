@@ -37,7 +37,23 @@
         </div>
         {% endfor %}
     </div>
-    <div class="row">
+    <table width="100%">
+        <tr>
+            <td style="text-align: center;">Grid Image</td>
+            <td style="text-align: center;">Dataset Image</td>
+        </tr>
+        <tr>
+            <td width="50%">
+                <img src={{compare_image_url}} alt="compare image">
+            </td>
+            <td width="50%">
+                <img src={{reference_image_url}} alt="reference image">
+            </td>
+        </tr>
+    </table>
+
+
+    <!-- <div class="row">
         <div class="column" style="float: right; width: 50%; text-align: center;">
             <h2 style="color: white;">Dataset Image</h2>
             <img src={{reference_image_url}} alt="reference image">
@@ -46,7 +62,7 @@
             <h2 style="color: white;">Grid Image</h2>
             <img src={{compare_image_url}} alt="compare image">
         </div>
-    </div>
+    </div> -->
     <hr>
     <hr>
     <div style="text-align: center;">
@@ -58,6 +74,7 @@
         </form>
         <form action="#" method="post">
             <input type="submit" name="logout_button" value="logout" style="padding: 12px 28px;">
+            <input type="submit" name="reset_button" value="reset" style="padding: 12px 28px;">
         </form>
 
     </div>
