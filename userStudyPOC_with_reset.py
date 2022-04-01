@@ -10,6 +10,8 @@ class UserStudyPOC_with_reset(object):
 
     def reset(self):
         self.dataset_initiated = False
+        self.on_left_vertex = False
+        self.on_right_vertex = False
         self.user_dataset_path = ""
         self.dataset_images_name_list = ""
 
@@ -25,8 +27,6 @@ class UserStudyPOC_with_reset(object):
         self._init_grid_image_index = -1
         self._upper_boundary = -1
         self._down_boundary = -1
-        self.on_left_vertex = False
-        self.on_right_vertex = False
         self._compute_average_score = False
 
     def init_user_dataset_file(self, user):
@@ -252,6 +252,8 @@ class UserStudyPOC_with_reset(object):
         # in this case, end of binary search, we take average score of 2 image
         if self._compute_average_score:
             self._compute_average_score = False
+            self.on_left_vertex = False
+            self.on_right_vertex = False
             print("end of binary search on left side ")
             for im_url in grid_im_url_list:
                 print(

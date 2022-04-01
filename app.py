@@ -8,18 +8,19 @@ from flask import (
     send_from_directory,
     flash,
 )
-from flask_socketio import SocketIO
 import os
+from datetime import timedelta
 
 # from userStudyPOC import UserStudyPOC
 from userStudyPOC_with_reset import UserStudyPOC_with_reset
+from userStudyAppContext import UserStudy_App_context
 
 app = Flask(__name__)
 app.secret_key = "user study interface"
+app.permanent_session_lifetime = timedelta(days=1)
 REF_IMAGE_FOLDER = os.path.join("static", "userStudyData")
 app.config["UPLOAD_FOLDER"] = REF_IMAGE_FOLDER
-socketio = SocketIO(app)
-USER_STUDY = UserStudyPOC_with_reset()
+USER_STUDY_APP_CONTEXT = UserStudy_App_context()
 # [X] session: look into
 # [X] modify structure of buttons trigger (find a better way to trigger)
 # [X] update funtions
@@ -50,71 +51,146 @@ def index():
         if "left_button" in request.form:
             print(
                 "left button before current grid index",
-                USER_STUDY.current_grid_image_index,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_index,
             )
-            grid_im_url_list = USER_STUDY.get_grid_url_list_from_left_button()
+            grid_im_url_list = USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].get_grid_url_list_from_left_button()
             (
-                USER_STUDY.current_grid_image_url,
-                USER_STUDY.current_grid_image_index,
-            ) = USER_STUDY.update_grid_image(grid_im_url_list)
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_url,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_index,
+            ) = USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].update_grid_image(
+                grid_im_url_list
+            )
             print(
                 "left button after current grid index",
-                USER_STUDY.current_grid_image_index,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_index,
             )
         elif "equal_button" in request.form:
             # TODO
             # [X]compute score
             # [X]write to csv
             # [X]update show image
-            USER_STUDY.update_image_score(USER_STUDY.user_dataset_path)
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].update_image_score(
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].user_dataset_path
+            )
 
             (
-                USER_STUDY.current_dataset_image_url,
-                USER_STUDY.current_grid_image_url,
-            ) = USER_STUDY.update_dataset_image(
-                USER_STUDY.user_dataset_path, USER_STUDY.grid_file_path
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_dataset_image_url,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_url,
+            ) = USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].update_dataset_image(
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].user_dataset_path,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].grid_file_path,
             )
-            if USER_STUDY.current_dataset_image_url is None:
+            if (
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_dataset_image_url
+                is None
+            ):
                 flash("There is not more dataset image, thanks for your work !")
-
+            return render_template(
+                "index.html",
+                reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_dataset_image_url,
+                compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_url,
+            )
         elif "right_button" in request.form:
             # if no more image to switch
             # TODO
             print(
                 "right button before: current grid index",
-                USER_STUDY.current_grid_image_index,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_index,
             )
-            grid_im_url_list = USER_STUDY.get_grid_url_list_from_right_button()
+            grid_im_url_list = USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].get_grid_url_list_from_right_button()
             (
-                USER_STUDY.current_grid_image_url,
-                USER_STUDY.current_grid_image_index,
-            ) = USER_STUDY.update_grid_image(grid_im_url_list)
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_url,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_index,
+            ) = USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].update_grid_image(
+                grid_im_url_list
+            )
             print(
                 "right button after: current grid index",
-                USER_STUDY.current_grid_image_index,
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].current_grid_image_index,
             )
         elif "logout_button" in request.form:
             return redirect(url_for("logout"))
         elif "reset_button" in request.form:
             return redirect(url_for("user"))
-    if USER_STUDY.on_left_vertex:
+
+    if USER_STUDY_APP_CONTEXT.user_info[
+        session["user_email_address"]
+    ].on_left_vertex:
         return render_template(
             "index.html",
-            reference_image_url=USER_STUDY.current_dataset_image_url,
-            compare_image_url=USER_STUDY.current_grid_image_url,
+            reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_dataset_image_url,
+            compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_grid_image_url,
             is_left_button_disabled="disabled",
         )
-    elif USER_STUDY.on_right_vertex:
+    elif USER_STUDY_APP_CONTEXT.user_info[
+        session["user_email_address"]
+    ].on_right_vertex:
         return render_template(
             "index.html",
-            reference_image_url=USER_STUDY.current_dataset_image_url,
-            compare_image_url=USER_STUDY.current_grid_image_url,
+            reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_dataset_image_url,
+            compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_grid_image_url,
             is_right_button_disabled="disabled",
         )
     return render_template(
         "index.html",
-        reference_image_url=USER_STUDY.current_dataset_image_url,
-        compare_image_url=USER_STUDY.current_grid_image_url,
+        reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].current_dataset_image_url,
+        compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].current_grid_image_url,
     )
 
 
@@ -127,6 +203,7 @@ def login():
         if user_email_address:
             if "@" in user_email_address:
                 user_email_address = user_email_address.replace("@", "_")
+            session.permanent = True
             session["user_email_address"] = user_email_address
             return redirect(url_for("user"))
         else:
@@ -142,23 +219,41 @@ def logout():
     return redirect(url_for("login"))
 
 
-@socketio.on("disconnect")
-def disconnect_user():
-    logout()
-
-
 @app.route("/user", methods=["GET", "POST"])
 def user():
     # do something when a user is registed (create a csv file for each user ?)
     # check csv fil in static/POC_dataset
-    USER_STUDY.reset()
-    USER_STUDY.init_user_dataset_file(session["user_email_address"])
-    if USER_STUDY.dataset_initiated:
+    if not USER_STUDY_APP_CONTEXT.is_user_existed(
+        session["user_email_address"]
+    ):
+        user_study_poc = UserStudyPOC_with_reset()
+        USER_STUDY_APP_CONTEXT.add_user(
+            session["user_email_address"], user_study_poc
+        )
+    else:
+        USER_STUDY_APP_CONTEXT.refresh_current_context(
+            session["user_email_address"]
+        )
+
+    if USER_STUDY_APP_CONTEXT.user_info[
+        session["user_email_address"]
+    ].dataset_initiated:
         (
-            USER_STUDY.current_dataset_image_url,
-            USER_STUDY.current_grid_image_url,
-        ) = USER_STUDY.update_dataset_image(
-            USER_STUDY.user_dataset_path, USER_STUDY.grid_file_path
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_dataset_image_url,
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_grid_image_url,
+        ) = USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].update_dataset_image(
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].user_dataset_path,
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].grid_file_path,
         )
         # session["userStudy"] = USER_STUDY.__dict__
     else:
