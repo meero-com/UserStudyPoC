@@ -11,74 +11,54 @@
         body {
             background-color: gray;
         }
-
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        img {
-            max-width: 920px;
-            height: auto;
-        }
     </style>
-
 </head>
-
 <body>
-
-    <h2 style="text-align: center;">Similar image exposure finding</h2>
-    <p style="text-align: center;">Find most similar image exposure from grid image to dataset image</p>
-    <div class="message" style="position: fixed; top: 40%; left: 50%;">
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning" style="color: rgb(0, 255, 106); font-size: large;">
-            {{ message }}
-        </div>
-        {% endfor %}
     </div>
     <table width="100%">
+      <tr>
+        <td colspan="2" style="text-align: center;">
+	  <h2 style="text-align: center;">Similar image exposure finding</h2>
+	  <p style="text-align: center;">Find most similar image exposure from grid image to dataset image</p>
+
+	  {% for message in get_flashed_messages() %}
+          <div class="alert alert-warning" style="color: rgb(0, 255, 106); font-size: large;">
+            {{ message }}
+          </div>
+          {% endfor %}
+	</td>
+      </tr>
         <tr>
             <td style="text-align: center;">Grid Image</td>
             <td style="text-align: center;">Dataset Image</td>
         </tr>
         <tr>
             <td width="50%">
-                <img src={{compare_image_url}} alt="compare image">
+                <img src={{compare_image_url}} alt="compare image" width="100%">
             </td>
             <td width="50%">
-                <img src={{reference_image_url}} alt="reference image">
+                <img src={{reference_image_url}} alt="reference image" width="100%">
             </td>
         </tr>
-    </table>
-
-
-    <!-- <div class="row">
-        <div class="column" style="float: right; width: 50%; text-align: center;">
-            <h2 style="color: white;">Dataset Image</h2>
-            <img src={{reference_image_url}} alt="reference image">
-        </div>
-        <div class="column" style="float: right; width: 50%; text-align: center;">
-            <h2 style="color: white;">Grid Image</h2>
-            <img src={{compare_image_url}} alt="compare image">
-        </div>
-    </div> -->
-    <hr>
-    <hr>
-    <div style="text-align: center;">
-        <form action="#" method="post">
+      <tr>
+        <td colspan="2" style="text-align: center;">
+	  <form action="#" method="post">
             <input type="submit" name="left_button" value="less exposure" {{is_left_button_disabled}}
                 style="padding: 12px 28px;">
             <input type="submit" name="equal_button" value="same exposure" style="padding: 12px 28px;">
             <input type="submit" name="right_button" value="more exposure" {{is_right_button_disabled}}
                 style="padding: 12px 28px;">
-        </form>
-        <form action="#" method="post">
+          </form>
+          <form action="#" method="post">
             <input type="submit" name="logout_button" value="logout" style="padding: 12px 28px;">
             <input type="submit" name="reset_button" value="reset" style="padding: 12px 28px;">
-        </form>
+          </form>
+	</td>
+      </tr>
+    </table>
 
-    </div>
+    <hr>
+    <hr>
 </body>
 
 </html>
