@@ -1,0 +1,8 @@
+imName,imPath,sector,sceneType,imScore,degradationClass,imDegrType,degradation
+01006640_6206398-standard_2400x1800_72_validated.jpg,static/userStudyData/POC_dataset/01006640_6206398-standard_2400x1800_72_validated.jpg,foodPro,bright,NaN,wellExp,original,O
+80691429_LH_okjs-standard_2400x1800_72_under_N1.75.jpg,static/userStudyData/POC_dataset/80691429_LH_okjs-standard_2400x1800_72_under_N1.75.jpg,foodPro,bright,NaN,underExp,degraded,N1.75
+07255802_Kerabu_Maggi_Udang-standard_2400x1800_72_over_P0.5.jpg,static/userStudyData/POC_dataset/07255802_Kerabu_Maggi_Udang-standard_2400x1800_72_over_P0.5.jpg,foodPro,bright,NaN,overExp,degraded,P0.5
+84295401_Rasberry_soda-standard_2400x1800_72_under_N2.jpg,static/userStudyData/POC_dataset/84295401_Rasberry_soda-standard_2400x1800_72_under_N2.jpg,foodPro,bright,NaN,underExp,degraded,N2
+77608974_65201040-standard_2400x1800_72_validated.jpg,static/userStudyData/POC_dataset/77608974_65201040-standard_2400x1800_72_validated.jpg,foodPro,bright,NaN,wellExp,original,O
+12232818_20848699-standard_2400x1800_72_over_P0.87.jpg,static/userStudyData/POC_dataset/12232818_20848699-standard_2400x1800_72_over_P0.87.jpg,foodPro,bright,NaN,overExp,degraded,P0.87
+9253621_SaveursdAtika_Food_CouscousPoulet.jpg,static/userStudyData/POC_dataset/9253621_SaveursdAtika_Food_CouscousPoulet.jpg,foodPro,dark,NaN,wellExp,original,O
