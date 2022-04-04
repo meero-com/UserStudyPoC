@@ -48,9 +48,12 @@ class UserStudyPOC_with_reset(object):
             grid_file_path
         ):
             file_name = user + "_" + dataset_file_name_with_extension
-            file_path = os.path.join(
-                "static", "userStudyData", "output", file_name
+            file_dir = file_path = os.path.join(
+                "static", "userStudyData", "output"
             )
+            file_path = os.path.join(file_dir, file_name)
+            if not os.path.isdir(file_dir):
+                os.makedirs(file_dir)
             if self._is_file_exist(file_path):
                 # start from annotated image
                 self.dataset_images_name_list = self._extract_im_name_from_csv(
