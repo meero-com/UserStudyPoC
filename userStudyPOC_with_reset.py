@@ -214,7 +214,7 @@ class UserStudyPOC_with_reset(object):
             grid_csv_file, ref_image_sector, ref_image_sceneType
         )
         if not self.all_grid_im_url_list:
-            return None, None
+            return str(ref_image_url), None
         # find compare image url
         (
             grid_image_url,
