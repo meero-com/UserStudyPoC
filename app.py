@@ -47,6 +47,23 @@ USER_STUDY_APP_CONTEXT = UserStudy_App_context()
 def index():
     if "user_email_address" not in session:
         return redirect(url_for("login"))
+    # check if image is available
+    if (
+        USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].current_dataset_image_url
+        is None
+    ):
+        flash("There is not more dataset image, thanks for your work !")
+        return redirect(url_for("logout"))
+    elif (
+        USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].current_grid_image_url
+        is None
+    ):
+        flash("There is not more grid image, thanks for your work !")
+        return redirect(url_for("logout"))
     if request.method == "POST":
         if "left_button" in request.form:
             print(
@@ -106,13 +123,7 @@ def index():
                     session["user_email_address"]
                 ].grid_file_path,
             )
-            if (
-                USER_STUDY_APP_CONTEXT.user_info[
-                    session["user_email_address"]
-                ].current_dataset_image_url
-                is None
-            ):
-                flash("There is not more dataset image, thanks for your work !")
+
             return render_template(
                 "index.html",
                 reference_image_url=USER_STUDY_APP_CONTEXT.user_info[

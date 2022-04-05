@@ -10,6 +10,12 @@
 </head>
 
 <body>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning"
+        style="color: rgb(0, 0, 0); font-size: large; position: fixed; top: 30%; left: 40%;">
+        {{ message }}
+    </div>
+    {% endfor %}
     <div style="position: fixed; top: 40%; left: 50%;">
         <form action="/login" method="post">
             <p>email address: </p>
