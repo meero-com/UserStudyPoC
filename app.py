@@ -123,16 +123,7 @@ def index():
                     session["user_email_address"]
                 ].grid_file_path,
             )
-
-            return render_template(
-                "index.html",
-                reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
-                    session["user_email_address"]
-                ].current_dataset_image_url,
-                compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
-                    session["user_email_address"]
-                ].current_grid_image_url,
-            )
+            return redirect(url_for("index"))
         elif "right_button" in request.form:
             # if no more image to switch
             # TODO
