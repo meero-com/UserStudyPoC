@@ -65,7 +65,14 @@ def index():
         flash("There is not more grid image, thanks for your work !")
         return redirect(url_for("logout"))
     if request.method == "POST":
-        if "left_button" in request.form:
+        if "im_left" in request.form:
+            print("/////////////")
+            print("left")
+        if "im_right" in request.form:
+            print("**********")
+            print("right")
+
+        if "grid_image_clicked" in request.form:
             print(
                 "left button before current grid index",
                 USER_STUDY_APP_CONTEXT.user_info[
@@ -124,7 +131,7 @@ def index():
                 ].grid_file_path,
             )
             return redirect(url_for("index"))
-        elif "right_button" in request.form:
+        elif "dataset_image_clicked" in request.form:
             # if no more image to switch
             # TODO
             print(
