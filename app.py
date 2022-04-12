@@ -47,7 +47,7 @@ USER_STUDY_APP_CONTEXT = UserStudy_App_context()
 def index():
     if "user_email_address" not in session:
         return redirect(url_for("login"))
-    # check if image is available
+        # check if image is available
     if (
         USER_STUDY_APP_CONTEXT.user_info[
             session["user_email_address"]
@@ -56,21 +56,8 @@ def index():
     ):
         flash("There is not more dataset image, thanks for your work !")
         return redirect(url_for("logout"))
-    elif (
-        USER_STUDY_APP_CONTEXT.user_info[
-            session["user_email_address"]
-        ].current_grid_image_url
-        is None
-    ):
-        flash("There is not more grid image, thanks for your work !")
-        return redirect(url_for("logout"))
+
     if request.method == "POST":
-        if "im_left" in request.form:
-            print("/////////////")
-            print("left")
-        if "im_right" in request.form:
-            print("**********")
-            print("right")
 
         if "grid_image_clicked" in request.form:
             print(
@@ -192,6 +179,32 @@ def index():
             ].current_grid_image_url,
             is_right_button_disabled="disabled",
         )
+
+    if (
+        USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].current_grid_image_url
+        is None
+    ):
+        # is no grid image for the scene type, juste update the dataset image until no more dataset image
+        (
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_dataset_image_url,
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_grid_image_url,
+        ) = USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].update_dataset_image(
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].user_dataset_path,
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].grid_file_path,
+        )
+        return redirect(url_for("index"))
     return render_template(
         "index.html",
         reference_image_url=USER_STUDY_APP_CONTEXT.user_info[

@@ -2,6 +2,7 @@ import math
 import os
 import pandas as pd
 import shutil
+from flask import flash
 
 
 class UserStudyPOC_with_reset(object):
@@ -149,7 +150,6 @@ class UserStudyPOC_with_reset(object):
         grid_im_url_list = self.all_grid_im_url_list[
             self._down_boundary : self._upper_boundary
         ]
-        print("len(grid_im_url_list) ", len(grid_im_url_list))
         if self._down_boundary == len(self.all_grid_im_url_list) - 2:
             self.on_right_vertex = True
         if self._down_boundary == self._upper_boundary:
@@ -172,6 +172,9 @@ class UserStudyPOC_with_reset(object):
         image_name = self.dataset_images_name_list[
             self._current_dataset_image_index
         ]
+        print("gird im_score ", im_score)
+        print("grid image url ", self.current_grid_image_url)
+        print("dataset image_name ", image_name)
 
         df = pd.read_csv(csv_file_path)
         df.loc[df["imName"] == image_name, "imScore"] = float(im_score[0])
@@ -180,8 +183,9 @@ class UserStudyPOC_with_reset(object):
     def _update_image_score_end_binary_search(
         self, csv_file_path, grid_im_url_list
     ):
-        grid_index_1 = grid_im_url_list.index(grid_im_url_list[0])
-        grid_index_2 = grid_im_url_list.index(grid_im_url_list[1])
+
+        grid_index_1 = self.all_grid_im_url_list.index(grid_im_url_list[0])
+        grid_index_2 = self.all_grid_im_url_list.index(grid_im_url_list[1])
         im_score_1 = float(self._compute_image_score(grid_index_1)[0])
         im_score_2 = float(self._compute_image_score(grid_index_2)[0])
         image_name = self.dataset_images_name_list[
@@ -215,6 +219,8 @@ class UserStudyPOC_with_reset(object):
         )
         if not self.all_grid_im_url_list:
             return str(ref_image_url), None
+        if self._current_dataset_image_index != 0:
+            flash("Image is evaluated, here is a new image to compare")
         # find compare image url
         (
             grid_image_url,
@@ -257,16 +263,15 @@ class UserStudyPOC_with_reset(object):
             self._compute_average_score = False
             self.on_left_vertex = False
             self.on_right_vertex = False
-            print("end of binary search on left side ")
             for im_url in grid_im_url_list:
                 print(
                     "average score from ",
                     self.all_grid_im_url_list.index(im_url),
                 )
-            print()
             self._update_image_score_end_binary_search(
                 self.user_dataset_path, grid_im_url_list
             )
+
             # when end of binary search
             (
                 self.current_dataset_image_url,
@@ -298,6 +303,7 @@ class UserStudyPOC_with_reset(object):
 
     def _extract_im_name_from_csv(self, user_csv_file):
         df = pd.read_csv(user_csv_file)
+        df = df.sample(frac=1).reset_index(drop=True)
         images_name = df.loc[
             pd.isna(df["imScore"]),
             "imName",

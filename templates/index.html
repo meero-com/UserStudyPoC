@@ -18,7 +18,7 @@
   </div>
   <table width="100%">
     <tr>
-      <td colspan="2" style="text-align: center;">
+      <td colspan="3" style="text-align: center;">
         <h2 style="text-align: center;">Click on brighter image</h2>
         <!-- <p style="text-align: center;">Click on brighter image</p> -->
 
@@ -30,40 +30,40 @@
       </td>
     </tr>
     <tr>
-      <td style="text-align: center;">Grid Image</td>
-      <td style="text-align: center;">Dataset Image</td>
-    </tr>
-    <tr>
       <td width="50%">
         <form action="#" method="post">
-          <button name="grid_image_clicked">
+          <button name="grid_image_clicked" {{is_left_button_disabled}}>
             <img src={{compare_image_url}} alt="compare image" width="100%">
           </button>
         </form>
       </td>
+      <td>
+        <form action="#" method="post">
+          <input type="submit" name="equal_button" value="same brightness" style="padding: 12px 28px;">
+        </form>
+      </td>
       <td width="50%">
         <form action="#" method="post">
-          <button name="dataset_image_clicked">
+          <button name="dataset_image_clicked" {{is_right_button_disabled}}>
             <img src={{reference_image_url}} alt="reference image" width="100%">
           </button>
         </form>
       </td>
     </tr>
     <tr>
-      <td colspan="2" style="text-align: center;">
+      <td colspan="3" style="text-align: center;">
+        <hr>
+        <hr>
         <form action="#" method="post">
-          <input type="submit" name="equal_button" value="same exposure" style="padding: 12px 28px;">
+          <input type="submit" name="reset_button" value="Restart current comparison" style="padding: 12px 28px;">
         </form>
-        <form action="#" method="post">
+        <form action="#" method="post" style="text-align: right;">
           <input type="submit" name="logout_button" value="logout" style="padding: 12px 28px;">
-          <input type="submit" name="reset_button" value="reset" style="padding: 12px 28px;">
         </form>
       </td>
     </tr>
   </table>
 
-  <hr>
-  <hr>
 </body>
 
 </html>
