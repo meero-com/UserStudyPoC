@@ -32,8 +32,8 @@ class UserStudyPOC_with_reset(object):
         self._compute_average_score = False
 
     def init_user_dataset_file(self, user):
-        dataset_file_name_with_extension = "POC_food_pro_dataset_300_V2.csv"
-        grid_file_name_with_extension = "iGrid_expo.csv"
+        dataset_file_name_with_extension = "POC_dataset_expo_test.csv"
+        grid_file_name_with_extension = "interpretationGrid_expo_test.csv"
         dataset_file_path = os.path.join(
             "static",
             "userStudyData",
