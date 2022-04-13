@@ -236,8 +236,12 @@ def login():
 
 @app.route("/logout")
 def logout():
+    if session.get("user_email_address"):
+        if USER_STUDY_APP_CONTEXT.is_user_existed(
+            session["user_email_address"]
+        ):
+            USER_STUDY_APP_CONTEXT.user_info.pop(session["user_email_address"])
     session.pop("user_email_address", None)
-    # session.pop("userStudy", None)
     return redirect(url_for("login"))
 
 

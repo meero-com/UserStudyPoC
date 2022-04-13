@@ -303,7 +303,8 @@ class UserStudyPOC_with_reset(object):
 
     def _extract_im_name_from_csv(self, user_csv_file):
         df = pd.read_csv(user_csv_file)
-        df = df.sample(frac=1).reset_index(drop=True)
+        # todo: shuffle dataset image and adapte the code with it
+        # df = df.sample(frac=1).reset_index(drop=True)
         images_name = df.loc[
             pd.isna(df["imScore"]),
             "imName",
