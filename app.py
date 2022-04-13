@@ -45,16 +45,19 @@ USER_STUDY_APP_CONTEXT = UserStudy_App_context()
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if "user_email_address" not in session:
+    if not session.get("user_email_address"):
         return redirect(url_for("login"))
         # check if image is available
-    if (
-        USER_STUDY_APP_CONTEXT.user_info[
-            session["user_email_address"]
-        ].current_dataset_image_url
-        is None
-    ):
-        flash("There is not more dataset image, thanks for your work !")
+    if USER_STUDY_APP_CONTEXT.is_user_existed(session["user_email_address"]):
+        if (
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].current_dataset_image_url
+            is None
+        ):
+            flash("There is not more dataset image, thanks for your work !")
+            return redirect(url_for("logout"))
+    else:
         return redirect(url_for("logout"))
 
     if request.method == "POST":
