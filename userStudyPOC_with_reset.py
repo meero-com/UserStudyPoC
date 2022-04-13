@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import shutil
 from flask import flash
+import time
 
 
 class UserStudyPOC_with_reset(object):
@@ -31,8 +32,8 @@ class UserStudyPOC_with_reset(object):
         self._compute_average_score = False
 
     def init_user_dataset_file(self, user):
-        dataset_file_name_with_extension = "POC_dataset_expo_test.csv"
-        grid_file_name_with_extension = "interpretationGrid_expo_test.csv"
+        dataset_file_name_with_extension = "POC_food_pro_dataset_300_V2.csv"
+        grid_file_name_with_extension = "iGrid_expo.csv"
         dataset_file_path = os.path.join(
             "static",
             "userStudyData",
@@ -180,6 +181,17 @@ class UserStudyPOC_with_reset(object):
         df.loc[df["imName"] == image_name, "imScore"] = float(im_score[0])
         df.to_csv(csv_file_path, index=False)
 
+    def update_image_timestamp(self, csv_file_path):
+        df = pd.read_csv(csv_file_path)
+        image_name = self.dataset_images_name_list[
+            self._current_dataset_image_index
+        ]
+        # seconds
+        current_time_stamp = time.time()
+        df.loc[df["imName"] == image_name, "time"] = float(current_time_stamp)
+        df.to_csv(csv_file_path, index=False)
+        pass
+
     def _update_image_score_end_binary_search(
         self, csv_file_path, grid_im_url_list
     ):
@@ -271,6 +283,7 @@ class UserStudyPOC_with_reset(object):
             self._update_image_score_end_binary_search(
                 self.user_dataset_path, grid_im_url_list
             )
+            self.update_image_timestamp(self.user_dataset_path)
 
             # when end of binary search
             (

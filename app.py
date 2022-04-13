@@ -99,6 +99,14 @@ def index():
                     session["user_email_address"]
                 ].user_dataset_path
             )
+            # update time stamp
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].update_image_timestamp(
+                USER_STUDY_APP_CONTEXT.user_info[
+                    session["user_email_address"]
+                ].user_dataset_path
+            )
 
             (
                 USER_STUDY_APP_CONTEXT.user_info[
@@ -281,7 +289,13 @@ def user():
                 session["user_email_address"]
             ].grid_file_path,
         )
-        # session["userStudy"] = USER_STUDY.__dict__
+        USER_STUDY_APP_CONTEXT.user_info[
+            session["user_email_address"]
+        ].update_image_timestamp(
+            USER_STUDY_APP_CONTEXT.user_info[
+                session["user_email_address"]
+            ].user_dataset_path
+        )
     else:
         return "<p> There is no input dataset csv file </p>"
     return redirect(url_for("index"))
