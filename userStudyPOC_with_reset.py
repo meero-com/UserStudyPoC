@@ -30,10 +30,32 @@ class UserStudyPOC_with_reset(object):
         self._upper_boundary = -1
         self._down_boundary = -1
         self._compute_average_score = False
+        self._is_redo_current_comparison = False
+
+    def redo_current_comparison(self):
+        self.dataset_initiated = False
+        self.on_left_vertex = False
+        self.on_right_vertex = False
+        self.user_dataset_path = ""
+
+        self.current_dataset_image_url = None
+        self.current_grid_image_url = None
+
+        self.grid_file_path = ""
+        self.current_grid_image_index = -1
+
+        self.all_grid_im_url_list = []
+        # private variable
+        self._current_dataset_image_index = -1
+        self._init_grid_image_index = -1
+        self._upper_boundary = -1
+        self._down_boundary = -1
+        self._compute_average_score = False
+        self._is_redo_current_comparison = True
 
     def init_user_dataset_file(self, user):
-        dataset_file_name_with_extension = "POC_dataset_expo_test.csv"
-        grid_file_name_with_extension = "interpretationGrid_expo_test.csv"
+        dataset_file_name_with_extension = "POC_food_pro_dataset_300_V2.csv"
+        grid_file_name_with_extension = "iGrid_expo.csv"
         dataset_file_path = os.path.join(
             "static",
             "userStudyData",
@@ -317,7 +339,10 @@ class UserStudyPOC_with_reset(object):
     def _extract_im_name_from_csv(self, user_csv_file):
         df = pd.read_csv(user_csv_file)
         # todo: shuffle dataset image and adapte the code with it
-        # df = df.sample(frac=1).reset_index(drop=True)
+        if not self._is_redo_current_comparison:
+            print("not redo so not shuffle")
+            self._is_redo_current_comparison = False
+            df = df.sample(frac=1).reset_index(drop=True)
         images_name = df.loc[
             pd.isna(df["imScore"]),
             "imName",

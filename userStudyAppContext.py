@@ -18,5 +18,5 @@ class UserStudy_App_context(object):
             return False
 
     def refresh_current_context(self, user):
-        self.user_info[user].reset()
+        self.user_info[user].redo_current_comparison()
         self.user_info[user].init_user_dataset_file(user)
