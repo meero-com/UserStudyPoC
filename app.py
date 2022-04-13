@@ -303,6 +303,8 @@ def user():
         return "<p> There is no input dataset csv file </p>"
     return redirect(url_for("index"))
 
+def gunicorn():
+    return app
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8999, debug=True)
