@@ -11,8 +11,16 @@ go to userStudyPOC_with_reset.py/init_user_dataset_file(...) and link the right 
 ## output
 output csv file will be stored into static/ouput folder
 
+## Using Makefile
 
-## Installation
+You can install the requirements by running `make install`.
+
+You can then run the server by doing: `make run`.
+
+And finally, in case you are developing and want the debug output & autoreload you can run `make run-dev`.
+
+
+## Installation without Makefile
 
 After clonning the repository you need to create a virtual environment:
 
@@ -22,7 +30,7 @@ python3 -m venv .venv && \
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
-## Running the servers
+## Running the servers with Makefile
 
 After creating the virtual environment you can do:
 
