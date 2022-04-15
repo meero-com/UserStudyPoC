@@ -54,7 +54,9 @@ class UserStudyPOC_with_reset(object):
         self._is_redo_current_comparison = True
 
     def init_user_dataset_file(self, user):
-        dataset_file_name_with_extension = "POC_food_pro_dataset_300_V2.csv"
+        dataset_file_name_with_extension = (
+            "POC_food_pro_dataset_random_150_V2.csv"
+        )
         grid_file_name_with_extension = "iGrid_expo.csv"
         dataset_file_path = os.path.join(
             "static",

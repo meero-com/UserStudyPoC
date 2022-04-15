@@ -164,33 +164,6 @@ def index():
         elif "reset_button" in request.form:
             return redirect(url_for("user"))
 
-    if USER_STUDY_APP_CONTEXT.user_info[
-        session["user_email_address"]
-    ].on_left_vertex:
-        return render_template(
-            "index.html",
-            reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
-                session["user_email_address"]
-            ].current_dataset_image_url,
-            compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
-                session["user_email_address"]
-            ].current_grid_image_url,
-            is_left_button_disabled="disabled",
-        )
-    elif USER_STUDY_APP_CONTEXT.user_info[
-        session["user_email_address"]
-    ].on_right_vertex:
-        return render_template(
-            "index.html",
-            reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
-                session["user_email_address"]
-            ].current_dataset_image_url,
-            compare_image_url=USER_STUDY_APP_CONTEXT.user_info[
-                session["user_email_address"]
-            ].current_grid_image_url,
-            is_right_button_disabled="disabled",
-        )
-
     if (
         USER_STUDY_APP_CONTEXT.user_info[
             session["user_email_address"]
@@ -303,8 +276,10 @@ def user():
         return "<p> There is no input dataset csv file </p>"
     return redirect(url_for("index"))
 
+
 def gunicorn():
     return app
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8999, debug=True)
