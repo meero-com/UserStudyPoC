@@ -1,3 +1,4 @@
+import csv
 import math
 import os
 import pandas as pd
@@ -33,6 +34,7 @@ class UserStudyPOC_with_reset(object):
         self._is_redo_current_comparison = False
 
     def redo_current_comparison(self):
+        self._is_redo_current_comparison = True
         self.dataset_initiated = False
         self.on_left_vertex = False
         self.on_right_vertex = False
@@ -46,17 +48,14 @@ class UserStudyPOC_with_reset(object):
 
         self.all_grid_im_url_list = []
         # private variable
-        self._current_dataset_image_index = -1
         self._init_grid_image_index = -1
+        self._current_dataset_image_index -= 1
         self._upper_boundary = -1
         self._down_boundary = -1
         self._compute_average_score = False
-        self._is_redo_current_comparison = True
 
     def init_user_dataset_file(self, user):
-        dataset_file_name_with_extension = (
-            "POC_food_pro_dataset_random_150_V2.csv"
-        )
+        dataset_file_name_with_extension = "POC_food_pro_dataset_160_V2.csv"
         grid_file_name_with_extension = "iGrid_expo.csv"
         dataset_file_path = os.path.join(
             "static",
@@ -82,9 +81,11 @@ class UserStudyPOC_with_reset(object):
                 os.makedirs(file_dir)
             if self._is_file_exist(file_path):
                 # start from annotated image
-                self.dataset_images_name_list = self._extract_im_name_from_csv(
-                    file_path
-                )
+                if not self._is_redo_current_comparison:
+                    self._is_redo_current_comparison = False
+                    self.dataset_images_name_list = (
+                        self._extract_im_name_from_csv(file_path)
+                    )
             else:
                 shutil.copy(dataset_file_path, file_path)
                 self.dataset_images_name_list = self._extract_im_name_from_csv(
@@ -192,7 +193,27 @@ class UserStudyPOC_with_reset(object):
         print()
         return grid_im_url_list
 
-    def update_image_score(self, csv_file_path):
+    def _update_csv_file_element(
+        self, csv_file_path, im_name, elm_to_update, elm_update_value
+    ):
+        df = pd.read_csv(csv_file_path)
+        # df.loc[df["imName"] == image_name, "imScore"] = float(im_score[0])
+        df.loc[df["imName"] == im_name, elm_to_update] = elm_update_value
+        df.to_csv(csv_file_path, index=False)
+
+    def annote_csv_file(self, csv_file_path, end_binary_search_im_list=None):
+        if self._compute_average_score:
+            self._update_image_score_end_binary_search(
+                csv_file_path, end_binary_search_im_list
+            )
+        else:
+            self._update_image_degradation(csv_file_path)
+            self._update_image_score(csv_file_path)
+            self.update_image_timestamp(csv_file_path)
+
+        pass
+
+    def _update_image_score(self, csv_file_path):
         im_score = self._compute_image_score(self.current_grid_image_index)
         image_name = self.dataset_images_name_list[
             self._current_dataset_image_index
@@ -200,21 +221,41 @@ class UserStudyPOC_with_reset(object):
         print("gird im_score ", im_score)
         print("grid image url ", self.current_grid_image_url)
         print("dataset image_name ", image_name)
+        self._update_csv_file_element(
+            csv_file_path=csv_file_path,
+            im_name=image_name,
+            elm_to_update="imScore",
+            elm_update_value=float(im_score[0]),
+        )
 
-        df = pd.read_csv(csv_file_path)
-        df.loc[df["imName"] == image_name, "imScore"] = float(im_score[0])
-        df.to_csv(csv_file_path, index=False)
-
-    def update_image_timestamp(self, csv_file_path):
-        df = pd.read_csv(csv_file_path)
+    def _update_image_degradation(self, csv_file_path):
         image_name = self.dataset_images_name_list[
             self._current_dataset_image_index
         ]
+        image_degradation = self._get_grid_image_degradation(
+            self.current_grid_image_index
+        )
+        self._update_csv_file_element(
+            csv_file_path=csv_file_path,
+            im_name=image_name,
+            elm_to_update="degradationGrid",
+            elm_update_value=str(image_degradation[0]),
+        )
+
+    def update_image_timestamp(self, csv_file_path):
+
+        image_name = self.dataset_images_name_list[
+            self._current_dataset_image_index
+        ]
+
         # seconds
         current_time_stamp = time.time()
-        df.loc[df["imName"] == image_name, "time"] = float(current_time_stamp)
-        df.to_csv(csv_file_path, index=False)
-        pass
+        self._update_csv_file_element(
+            csv_file_path=csv_file_path,
+            im_name=image_name,
+            elm_to_update="time",
+            elm_update_value=float(current_time_stamp),
+        )
 
     def _update_image_score_end_binary_search(
         self, csv_file_path, grid_im_url_list
@@ -255,8 +296,6 @@ class UserStudyPOC_with_reset(object):
         )
         if not self.all_grid_im_url_list:
             return str(ref_image_url), None
-        if self._current_dataset_image_index != 0:
-            flash("Image is evaluated, here is a new image to compare")
         # find compare image url
         (
             grid_image_url,
@@ -296,6 +335,7 @@ class UserStudyPOC_with_reset(object):
         )
         # in this case, end of binary search, we take average score of 2 image
         if self._compute_average_score:
+            self.annote_csv_file(self.user_dataset_path, grid_im_url_list)
             self._compute_average_score = False
             self.on_left_vertex = False
             self.on_right_vertex = False
@@ -304,11 +344,6 @@ class UserStudyPOC_with_reset(object):
                     "average score from ",
                     self.all_grid_im_url_list.index(im_url),
                 )
-            self._update_image_score_end_binary_search(
-                self.user_dataset_path, grid_im_url_list
-            )
-            self.update_image_timestamp(self.user_dataset_path)
-
             # when end of binary search
             (
                 self.current_dataset_image_url,
@@ -340,11 +375,7 @@ class UserStudyPOC_with_reset(object):
 
     def _extract_im_name_from_csv(self, user_csv_file):
         df = pd.read_csv(user_csv_file)
-        # todo: shuffle dataset image and adapte the code with it
-        if not self._is_redo_current_comparison:
-            print("not redo so not shuffle")
-            self._is_redo_current_comparison = False
-            df = df.sample(frac=1).reset_index(drop=True)
+        df = df.sample(frac=1).reset_index(drop=True)
         images_name = df.loc[
             pd.isna(df["imScore"]),
             "imName",
@@ -411,6 +442,15 @@ class UserStudyPOC_with_reset(object):
             "gridRefScore",
         ]
         return gridRefScore.values.tolist()
+
+    def _get_grid_image_degradation(self, grid_image_index):
+        gri_url = self.all_grid_im_url_list[grid_image_index]
+        df = pd.read_csv(self.grid_file_path)
+        gridDegradation = df.loc[
+            df["imPath"] == gri_url,
+            "degradationGrid",
+        ]
+        return gridDegradation.values.tolist()
 
 
 # if __name__ == "__main__":

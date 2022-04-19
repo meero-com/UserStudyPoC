@@ -97,15 +97,7 @@ def index():
             # [X]update show image
             USER_STUDY_APP_CONTEXT.user_info[
                 session["user_email_address"]
-            ].update_image_score(
-                USER_STUDY_APP_CONTEXT.user_info[
-                    session["user_email_address"]
-                ].user_dataset_path
-            )
-            # update time stamp
-            USER_STUDY_APP_CONTEXT.user_info[
-                session["user_email_address"]
-            ].update_image_timestamp(
+            ].annote_csv_file(
                 USER_STUDY_APP_CONTEXT.user_info[
                     session["user_email_address"]
                 ].user_dataset_path
