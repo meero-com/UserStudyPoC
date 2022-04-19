@@ -20,3 +20,12 @@ class UserStudy_App_context(object):
     def refresh_current_context(self, user):
         self.user_info[user].redo_current_comparison()
         self.user_info[user].init_user_dataset_file(user)
+
+    def user_study_image_counter(self, user):
+        image_counter = (
+            str(self.user_info[user]._current_dataset_image_index)
+            + "/"
+            + str(len(self.user_info[user].dataset_images_name_list))
+            + " images are done "
+        )
+        return image_counter

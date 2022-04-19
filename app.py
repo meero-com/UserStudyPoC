@@ -181,6 +181,11 @@ def index():
             ].grid_file_path,
         )
         return redirect(url_for("index"))
+
+    image_counter = USER_STUDY_APP_CONTEXT.user_study_image_counter(
+        session["user_email_address"]
+    )
+    flash(image_counter)
     return render_template(
         "index.html",
         reference_image_url=USER_STUDY_APP_CONTEXT.user_info[
@@ -257,6 +262,7 @@ def user():
                 session["user_email_address"]
             ].grid_file_path,
         )
+        # note the timestamp of login
         USER_STUDY_APP_CONTEXT.user_info[
             session["user_email_address"]
         ].update_image_timestamp(
