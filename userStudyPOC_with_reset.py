@@ -91,7 +91,6 @@ class UserStudyPOC_with_reset(object):
                 self.dataset_images_name_list = self._extract_im_name_from_csv(
                     file_path
                 )
-
             self.dataset_initiated = True
             self.user_dataset_path = file_path
             self.grid_file_path = grid_file_path
@@ -206,6 +205,10 @@ class UserStudyPOC_with_reset(object):
             self._update_image_score_end_binary_search(
                 csv_file_path, end_binary_search_im_list
             )
+            self._update_image_degradation_end_binary_search(
+                csv_file_path, end_binary_search_im_list
+            )
+            self.update_image_timestamp(csv_file_path)
         else:
             self._update_image_degradation(csv_file_path)
             self._update_image_score(csv_file_path)
@@ -214,7 +217,7 @@ class UserStudyPOC_with_reset(object):
         pass
 
     def _update_image_score(self, csv_file_path):
-        im_score = self._compute_image_score(self.current_grid_image_index)
+        im_score = self._get_image_score(self.current_grid_image_index)
         image_name = self.dataset_images_name_list[
             self._current_dataset_image_index
         ]
@@ -228,6 +231,26 @@ class UserStudyPOC_with_reset(object):
             elm_update_value=float(im_score[0]),
         )
 
+    def _update_image_degradation_end_binary_search(
+        self, csv_file_path, grid_im_url_list
+    ):
+        grid_index_1 = self.all_grid_im_url_list.index(grid_im_url_list[0])
+        grid_index_2 = self.all_grid_im_url_list.index(grid_im_url_list[1])
+        im_degradation_1 = float(
+            self._get_grid_image_degradation(grid_index_1)[0]
+        )
+        im_degradation_2 = float(
+            self._get_grid_image_degradation(grid_index_2)[0]
+        )
+        image_name = self.dataset_images_name_list[
+            self._current_dataset_image_index
+        ]
+        df = pd.read_csv(csv_file_path)
+        df.loc[df["imName"] == image_name, "degradationGrid"] = (
+            im_degradation_1 + im_degradation_2
+        ) / 2.0
+        df.to_csv(csv_file_path, index=False)
+
     def _update_image_degradation(self, csv_file_path):
         image_name = self.dataset_images_name_list[
             self._current_dataset_image_index
@@ -239,7 +262,7 @@ class UserStudyPOC_with_reset(object):
             csv_file_path=csv_file_path,
             im_name=image_name,
             elm_to_update="degradationGrid",
-            elm_update_value=str(image_degradation[0]),
+            elm_update_value=float(image_degradation[0]),
         )
 
     def update_image_timestamp(self, csv_file_path):
@@ -263,8 +286,8 @@ class UserStudyPOC_with_reset(object):
 
         grid_index_1 = self.all_grid_im_url_list.index(grid_im_url_list[0])
         grid_index_2 = self.all_grid_im_url_list.index(grid_im_url_list[1])
-        im_score_1 = float(self._compute_image_score(grid_index_1)[0])
-        im_score_2 = float(self._compute_image_score(grid_index_2)[0])
+        im_score_1 = float(self._get_image_score(grid_index_1)[0])
+        im_score_2 = float(self._get_image_score(grid_index_2)[0])
         image_name = self.dataset_images_name_list[
             self._current_dataset_image_index
         ]
@@ -434,22 +457,23 @@ class UserStudyPOC_with_reset(object):
             if self._is_file_exist(im_url):
                 shutil.copy(im_url, save_dir + "/" + name)
 
-    def _compute_image_score(self, grid_image_index):
+    def _get_image_score(self, grid_image_index):
         gri_url = self.all_grid_im_url_list[grid_image_index]
         df = pd.read_csv(self.grid_file_path)
-        gridRefScore = df.loc[
+        image_score = df.loc[
             df["imPath"] == gri_url,
             "gridRefScore",
         ]
-        return gridRefScore.values.tolist()
+        return image_score.values.tolist()
 
     def _get_grid_image_degradation(self, grid_image_index):
         gri_url = self.all_grid_im_url_list[grid_image_index]
         df = pd.read_csv(self.grid_file_path)
         gridDegradation = df.loc[
             df["imPath"] == gri_url,
-            "degradationGrid",
+            "degradationGridFloat",
         ]
+        print("degradation grid value ", gridDegradation.values.tolist())
         return gridDegradation.values.tolist()
 
 
