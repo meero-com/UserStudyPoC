@@ -247,7 +247,7 @@ class UserStudyPOC_with_reset(object):
         ]
         df = pd.read_csv(csv_file_path)
         df.loc[df["imName"] == image_name, "degradationGrid"] = (
-            im_degradation_1 + im_degradation_2
+            float(im_degradation_1) + float(im_degradation_2)
         ) / 2.0
         df.to_csv(csv_file_path, index=False)
 
